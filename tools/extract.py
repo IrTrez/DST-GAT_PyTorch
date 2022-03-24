@@ -351,12 +351,6 @@ def generateNNdata(
 
         denseDateIndex = daterange(start, end)
 
-        # Functionality for airports outside of the top50
-        if airport in list(airport_dict.keys()):
-            airportCapacity = airport_dict[airport]["capacity"]
-        else:
-            airportCapacity = 60  # this is a common value
-
         # weatherData = fetch_weather_data(airport, timeinterval)
 
         ### get aggregate features for rolling window
@@ -384,9 +378,7 @@ def generateNNdata(
             .reindex(denseDateIndex, fill_value=0)
             .assign(planes=lambda x: x.arriving - x.departing)
             .assign(
-                capacityFilled=lambda x: (x.arriving + x.departing)
-                / airportCapacity
-                * 100
+                movements=lambda x: (x.arriving + x.departing)
             )
             .assign(date=lambda x: x.index.date)
             .assign(weekday=lambda x: x.index.weekday)
